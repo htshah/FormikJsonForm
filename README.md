@@ -1,2 +1,0 @@
-# FormikJsonForm
-Created with CodeSandbox
