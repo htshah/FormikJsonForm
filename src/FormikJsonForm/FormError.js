@@ -10,7 +10,6 @@ export default props => {
       autoHideDuration={4000}
       open={isOpen}
       onClose={() => {
-        console.log("Closing");
         setOpen(false);
       }}
       {...props}

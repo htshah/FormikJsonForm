@@ -1,29 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { Formik, Form } from "formik";
 import FormikJsonForm from "./FormikJsonForm";
 import * as Yup from "yup";
 import { Typography } from "@material-ui/core";
-
-const initialValues = {
-  username: "123456789",
-  password: "helloworld",
-  vehicles: [],
-  gender: "",
-  selectbox: ""
-};
-
-const validationSchema = Yup.object().shape({
-  username: Yup.number()
-    .label("Username")
-    .required()
-    .typeError("The field must be a ${type}"),
-  password: Yup.string()
-    .label("Password")
-    .required()
-    .min(6)
-    .max(32)
-});
 
 const formSchema = [
   <Typography variant="body2" align="left">
@@ -33,13 +12,24 @@ const formSchema = [
     type: "text",
     name: "username",
     label: "Username",
-    margin: "normal"
+    margin: "normal",
+    value: "123456789",
+    validate: Yup.number()
+      .label("Username")
+      .required()
+      .typeError("The field must be a ${type}")
   },
   {
     type: "password",
     name: "password",
     label: "Password",
-    margin: "normal"
+    margin: "normal",
+    value: "helloworld",
+    validate: Yup.string()
+      .label("Password")
+      .required()
+      .min(6)
+      .max(32)
   },
   {
     type: "radio",
@@ -54,7 +44,8 @@ const formSchema = [
     options: [
       { label: "Male", value: "male" },
       { label: "Female", value: "female" }
-    ]
+    ],
+    value: ""
   },
   {
     type: "checkbox",
@@ -69,7 +60,8 @@ const formSchema = [
     options: [
       { label: "Car", value: "car" },
       { label: "Motorbike", value: "bike" }
-    ]
+    ],
+    value: []
   },
   {
     type: "select",
@@ -79,7 +71,8 @@ const formSchema = [
     options: [
       { label: "het", value: "het", disabled: true },
       { label: "hetsdfgsdfgsdfgsdfg", value: "het1" }
-    ]
+    ],
+    value: ""
   },
   {
     type: "submit",
@@ -91,12 +84,12 @@ const formSchema = [
     }
   }
 ];
+
 function App() {
   return (
     <div className="App" style={{ width: "220px", margin: "0 auto" }}>
-      <Formik
-        initialValues={initialValues}
-        validationSchema={validationSchema}
+      <FormikJsonForm
+        schema={formSchema}
         onSubmit={(values, formikBag) => {
           // Set status to undefined every time
           // of Snackbar to work correctly
@@ -106,11 +99,6 @@ function App() {
             formikBag.setSubmitting(false);
           }, 2000);
         }}
-        render={props => (
-          <Form>
-            <FormikJsonForm formikProps={props} schema={formSchema} />
-          </Form>
-        )}
       />
     </div>
   );

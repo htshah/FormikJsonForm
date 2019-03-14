@@ -1,6 +1,9 @@
 import React from "react";
-import SimpleField, { isSimpleElement } from "./SimpleField";
+import { Formik, Form } from "formik";
+import { object } from "yup";
 import { Grid } from "@material-ui/core";
+
+import SimpleField, { isSimpleElement } from "./SimpleField";
 import FormError from "./FormError";
 
 // There can be following types of elements:
@@ -11,7 +14,8 @@ import FormError from "./FormError";
 // TODO global form styling
 // TODO general error message handling
 // TODO show errors when submitting form
-export default ({ schema, formikProps }) => {
+
+const JsonForm = ({ schema, formikProps }) => {
   return (
     <React.Fragment>
       {typeof formikProps.status !== "undefined" && (
@@ -26,7 +30,7 @@ export default ({ schema, formikProps }) => {
       >
         {schema.map((element, index) => {
           return (
-            <Grid key={index} item style={{ border: "0px solid black" }}>
+            <Grid key={index} item>
               {(() => {
                 // Render a normal react element
                 if (isSimpleElement(element)) {
@@ -40,5 +44,64 @@ export default ({ schema, formikProps }) => {
         })}
       </Grid>
     </React.Fragment>
+  );
+};
+
+const transformFormSchema = schema => {
+  let formSchema = [];
+  let initialValues = {};
+  let validationSchema = {};
+
+  schema.map((field, i) => {
+    const { value, validate, ...newField } = field;
+
+    // Add all form elements to formSchema
+    formSchema = [...formSchema, newField];
+
+    // Add to initial value and validtionSchema
+    // only if the Object is not a React.Element
+    if (!React.isValidElement(field)) {
+      // Add default value only if the field takes
+      // an input from user.
+      if (!["submit", "button"].includes(newField.type)) {
+        // Use "" || [] based on input type if no default
+        // value provided.
+        initialValues = {
+          ...initialValues,
+          [newField.name]: value || (newField.type === "checkbox" ? [] : "")
+        };
+      }
+
+      // Add validation only if provided.
+      if (validate) {
+        validationSchema = { ...validationSchema, [newField.name]: validate };
+      }
+    }
+  });
+
+  // Convert validationSchema to Yup.object and return.
+  return {
+    formSchema,
+    initialValues,
+    validationSchema: object().shape(validationSchema)
+  };
+};
+
+export default ({ schema, ...formikProps }) => {
+  const { formSchema, initialValues, validationSchema } = transformFormSchema(
+    schema
+  );
+
+  return (
+    <Formik
+      {...formikProps}
+      initialValues={initialValues}
+      validationSchema={validationSchema}
+      render={props => (
+        <Form>
+          <JsonForm formikProps={props} schema={formSchema} />
+        </Form>
+      )}
+    />
   );
 };
