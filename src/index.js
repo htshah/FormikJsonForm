@@ -6,8 +6,8 @@ import * as Yup from "yup";
 import { Typography } from "@material-ui/core";
 
 const initialValues = {
-  username: "",
-  password: "",
+  username: "123456789",
+  password: "helloworld",
   vehicles: [],
   gender: "",
   selectbox: ""
