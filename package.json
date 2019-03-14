@@ -1,8 +1,8 @@
 {
   "name": "formikjsonform",
   "version": "1.0.0",
-  "description": "",
-  "keywords": [],
+  "description": "Create Json Schema based Formik forms easily!!",
+  "keywords": ["react","reactjs","formik","formik-json-schema","material-ui","formik-json","formik-schema"],
   "main": "src/index.js",
   "dependencies": {
     "@material-ui/core": "3.9.2",
