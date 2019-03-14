@@ -11,7 +11,7 @@ import FormError from "./FormError";
 // TODO global form styling
 // TODO general error message handling
 // TODO show errors when submitting form
-export default ({ schema, globalStyles, formikProps }) => {
+export default ({ schema, formikProps }) => {
   return (
     <React.Fragment>
       {typeof formikProps.status !== "undefined" && (
