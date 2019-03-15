@@ -45,9 +45,9 @@ export default ({ type, formikProps, ...props }) => {
     return <FormikSelectField {...props} />;
   } else if (type === "button" || type === "submit") {
     const { label, onSubmitLabel, ...buttonProps } = props;
-    const { isSubmitting, touched } = formikProps;
+    const { isSubmitting } = formikProps;
 
-    const isDisabled = type === "submit" && isSubmitting && touched;
+    const isDisabled = type === "submit" && isSubmitting;
     return (
       <Button
         variant="contained"
