@@ -11,11 +11,12 @@ import FormError from "./FormError";
 // 2. ComplexElements
 // 3. Other Elements
 
+// TODO change default values after first render
 // TODO global form styling
 // TODO general error message handling
 // TODO show errors when submitting form
 
-const JsonForm = ({ schema, formikProps }) => {
+const JsonForm = ({ schema, disableFieldsOnSubmit, formikProps }) => {
   return (
     <React.Fragment>
       {typeof formikProps.status !== "undefined" && (
@@ -34,7 +35,15 @@ const JsonForm = ({ schema, formikProps }) => {
               {(() => {
                 // Render a normal react element
                 if (isSimpleElement(element)) {
-                  return <SimpleField {...element} formikProps={formikProps} />;
+                  return (
+                    <SimpleField
+                      {...element}
+                      disabled={
+                        disableFieldsOnSubmit && formikProps.isSubmitting
+                      }
+                      formikProps={formikProps}
+                    />
+                  );
                 } else if (React.isValidElement(element)) {
                   return element;
                 }
@@ -87,7 +96,7 @@ const transformFormSchema = schema => {
   };
 };
 
-export default ({ schema, ...formikProps }) => {
+export default ({ schema, disableFieldsOnSubmit, ...formikProps }) => {
   const { formSchema, initialValues, validationSchema } = transformFormSchema(
     schema
   );
@@ -99,7 +108,11 @@ export default ({ schema, ...formikProps }) => {
       validationSchema={validationSchema}
       render={props => (
         <Form>
-          <JsonForm formikProps={props} schema={formSchema} />
+          <JsonForm
+            formikProps={props}
+            disableFieldsOnSubmit={disableFieldsOnSubmit || false}
+            schema={formSchema}
+          />
         </Form>
       )}
     />

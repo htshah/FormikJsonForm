@@ -14,6 +14,7 @@ const formSchema = [
     label: "Username",
     margin: "normal",
     value: "123456789",
+    inputProps: { maxLength: 10 },
     validate: Yup.number()
       .label("Username")
       .required()
@@ -90,12 +91,14 @@ function App() {
     <div className="App" style={{ width: "220px", margin: "0 auto" }}>
       <FormikJsonForm
         schema={formSchema}
+        disableFieldsOnSubmit={true}
         onSubmit={(values, formikBag) => {
           // Set status to undefined every time
           // of Snackbar to work correctly
           formikBag.setStatus(undefined);
           setTimeout(() => {
             formikBag.setStatus("Something went wrong");
+            formikBag.setErrors({ username: "Already exists" });
             formikBag.setSubmitting(false);
           }, 2000);
         }}
