@@ -16,11 +16,12 @@ import FormError from "./FormError";
 // TODO general error message handling
 // TODO show errors when submitting form
 
-const renderChild = (element, disableFieldsOnSubmit, formikProps) => {
+const renderChild = (element, disableFieldsOnSubmit, formikProps, index) => {
   // Render a normal react element
   if (isSimpleElement(element)) {
     return (
       <SimpleField
+        key={index}
         {...element}
         disabled={disableFieldsOnSubmit && formikProps.isSubmitting}
         formikProps={formikProps}
@@ -58,7 +59,12 @@ const JsonForm = ({ schema, disableFieldsOnSubmit, formikProps }) => {
           // TODO if group element then get Grid item props
           const isGroupElement = element.type === "group";
           if (element.type === "hidden") {
-            return renderChild(element, disableFieldsOnSubmit, formikProps);
+            return renderChild(
+              element,
+              disableFieldsOnSubmit,
+              formikProps,
+              index
+            );
           }
           return (
             <Grid
