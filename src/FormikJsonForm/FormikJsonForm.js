@@ -18,7 +18,7 @@ import FormError from "./FormError";
 
 const renderChild = (element, disableFieldsOnSubmit, formikProps, index) => {
   // Render a normal react element
-  console.log(element);
+
   if (isSimpleElement(element)) {
     return (
       <SimpleField
