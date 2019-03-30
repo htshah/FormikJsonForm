@@ -16,6 +16,31 @@ import FormError from "./FormError";
 // TODO general error message handling
 // TODO show errors when submitting form
 
+const renderChild = (element, disableFieldsOnSubmit, formikProps) => {
+  // Render a normal react element
+  if (isSimpleElement(element)) {
+    return (
+      <SimpleField
+        {...element}
+        disabled={disableFieldsOnSubmit && formikProps.isSubmitting}
+        formikProps={formikProps}
+      />
+    );
+  } else if (React.isValidElement(element)) {
+    return element;
+  }
+};
+
+const renderGroupElements = (elements, disableFieldsOnSubmit, formikProps) => {
+  return elements.map((ele, i) => {
+    return (
+      <Grid item key={i} {...ele.GridItemProps}>
+        {renderChild(ele, disableFieldsOnSubmit, formikProps)}
+      </Grid>
+    );
+  });
+};
+
 const JsonForm = ({ schema, disableFieldsOnSubmit, formikProps }) => {
   return (
     <React.Fragment>
@@ -30,24 +55,25 @@ const JsonForm = ({ schema, disableFieldsOnSubmit, formikProps }) => {
         alignItems="stretch"
       >
         {schema.map((element, index) => {
+          // TODO if group element then get Grid item props
+          const isGroupElement = element.type === "group";
+          if (element.type === "hidden") {
+            return renderChild(element, disableFieldsOnSubmit, formikProps);
+          }
           return (
-            <Grid key={index} item>
-              {(() => {
-                // Render a normal react element
-                if (isSimpleElement(element)) {
-                  return (
-                    <SimpleField
-                      {...element}
-                      disabled={
-                        disableFieldsOnSubmit && formikProps.isSubmitting
-                      }
-                      formikProps={formikProps}
-                    />
-                  );
-                } else if (React.isValidElement(element)) {
-                  return element;
-                }
-              })()}
+            <Grid
+              key={index}
+              item
+              container={isGroupElement}
+              {...element.GridItemProps}
+            >
+              {isGroupElement
+                ? renderGroupElements(
+                    element.elements,
+                    disableFieldsOnSubmit,
+                    formikProps
+                  )
+                : renderChild(element, disableFieldsOnSubmit, formikProps)}
             </Grid>
           );
         })}
@@ -61,15 +87,19 @@ const transformFormSchema = schema => {
   let initialValues = {};
   let validationSchema = {};
 
-  schema.map((field, i) => {
-    const { value, validate, ...newField } = field;
-
-    // Add all form elements to formSchema
-    formSchema = [...formSchema, newField];
-
+  schema.map((element, i) => {
     // Add to initial value and validtionSchema
     // only if the Object is not a React.Element
-    if (!React.isValidElement(field)) {
+    if (React.isValidElement(element)) return;
+
+    const isGroupElement = element.type === "group";
+
+    // Convert all elements to array(making it compatible with group elements)
+    const fields = isGroupElement ? element.elements : [element];
+
+    const newFields = fields.map(field => {
+      const { value, validate, ...newField } = field;
+
       // Add default value only if the field takes
       // an input from user.
       if (!["submit", "button"].includes(newField.type)) {
@@ -85,9 +115,16 @@ const transformFormSchema = schema => {
       if (validate) {
         validationSchema = { ...validationSchema, [newField.name]: validate };
       }
-    }
-  });
 
+      return newField;
+    });
+
+    // Add all form elements to formSchema
+    formSchema = [
+      ...formSchema,
+      isGroupElement ? { ...element, elements: newFields } : newFields[0]
+    ];
+  });
   // Convert validationSchema to Yup.object and return.
   return {
     formSchema,

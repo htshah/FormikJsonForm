@@ -9,6 +9,45 @@ const formSchema = [
     REGISTER
   </Typography>,
   {
+    type: "hidden",
+    name: "hidden-field",
+    value: "hide"
+  },
+  {
+    type: "group",
+    GridItemProps: {
+      direction: "column"
+    },
+    elements: [
+      {
+        type: "text",
+        name: "username1",
+        label: "Username2",
+        margin: "normal",
+        value: "12345672389",
+        GridItemProps: { xs: 6 },
+        inputProps: { maxLength: 10 },
+        validate: Yup.number()
+          .label("Username")
+          .required()
+          .typeError("The field must be a ${type}")
+      },
+      {
+        type: "password",
+        name: "password1",
+        label: "Password2",
+        margin: "normal",
+        value: "helloworld",
+        GridItemProps: { xs: 6 },
+        validate: Yup.string()
+          .label("Password")
+          .required()
+          .min(6)
+          .max(32)
+      }
+    ]
+  },
+  {
     type: "text",
     name: "username",
     label: "Username",
@@ -93,6 +132,7 @@ function App() {
         schema={formSchema}
         disableFieldsOnSubmit={true}
         onSubmit={(values, formikBag) => {
+          console.log(values);
           // Set status to undefined every time
           // of Snackbar to work correctly
           formikBag.setStatus(undefined);

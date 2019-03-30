@@ -35,7 +35,9 @@ const allFields = [
 ];
 
 export default ({ type, formikProps, ...props }) => {
-  if (textFields.includes(type)) {
+  if (type === "hidden") {
+    return <input type="hidden" value={formikProps.values[props.name]} />;
+  } else if (textFields.includes(type)) {
     return <FormikTextField type={type} fullWidth {...props} />;
   } else if (type === "checkbox") {
     return <FormikCheckboxGroupField {...props} multiple={true} />;
