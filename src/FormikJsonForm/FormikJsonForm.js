@@ -18,6 +18,7 @@ import FormError from "./FormError";
 
 const renderChild = (element, disableFieldsOnSubmit, formikProps, index) => {
   // Render a normal react element
+  console.log(element);
   if (isSimpleElement(element)) {
     return (
       <SimpleField
@@ -96,7 +97,10 @@ const transformFormSchema = schema => {
   schema.map((element, i) => {
     // Add to initial value and validtionSchema
     // only if the Object is not a React.Element
-    if (React.isValidElement(element)) return;
+    if (React.isValidElement(element)) {
+      formSchema = [...formSchema, element];
+      return;
+    }
 
     const isGroupElement = element.type === "group";
 
