@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Formik, Form } from "formik";
 import { object } from "yup";
 import { Grid } from "@material-ui/core";
@@ -48,7 +48,15 @@ const renderGroupElements = (elements, disableFieldsOnSubmit, formikProps) => {
   });
 };
 
-const JsonForm = ({ schema, disableFieldsOnSubmit, formikProps }) => {
+const JsonForm = ({
+  schema,
+  disableFieldsOnSubmit,
+  onInitialize,
+  formikProps
+}) => {
+  useEffect(() => {
+    onInitialize && onInitialize();
+  }, []);
   return (
     <React.Fragment>
       {typeof formikProps.status !== "undefined" && (
@@ -148,7 +156,12 @@ const transformFormSchema = schema => {
   };
 };
 
-export default ({ schema, disableFieldsOnSubmit, ...formikProps }) => {
+export default ({
+  schema,
+  disableFieldsOnSubmit,
+  onInitialize,
+  ...formikProps
+}) => {
   const { formSchema, initialValues, validationSchema } = transformFormSchema(
     schema
   );
@@ -158,15 +171,20 @@ export default ({ schema, disableFieldsOnSubmit, ...formikProps }) => {
       {...formikProps}
       initialValues={initialValues}
       validationSchema={validationSchema}
-      render={props => (
-        <Form>
-          <JsonForm
-            formikProps={props}
-            disableFieldsOnSubmit={disableFieldsOnSubmit || false}
-            schema={formSchema}
-          />
-        </Form>
-      )}
+      render={props => {
+        return (
+          <Form>
+            <JsonForm
+              formikProps={props}
+              disableFieldsOnSubmit={disableFieldsOnSubmit || false}
+              schema={formSchema}
+              onInitialize={() => {
+                onInitialize && onInitialize(props);
+              }}
+            />
+          </Form>
+        );
+      }}
     />
   );
 };

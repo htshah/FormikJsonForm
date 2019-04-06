@@ -130,11 +130,28 @@ const formSchema = [
 function App() {
   return (
     <div className="App" style={{ width: "220px", margin: "0 auto" }}>
+      <button
+        onClick={e => {
+          const event = new Event("btn_clicked");
+          window.dispatchEvent(event);
+        }}
+      >
+        Hello
+      </button>
       <FormikJsonForm
         schema={formSchema}
         disableFieldsOnSubmit={true}
+        onInitialize={({ setFieldValue }) => {
+          window.addEventListener(
+            "btn_clicked",
+            () => {
+              setFieldValue("username", "9876543210");
+            },
+            false
+          );
+        }}
         onSubmit={(values, formikBag) => {
-          console.log(values);
+          console.log({ values, formikBag });
           // Set status to undefined every time
           // of Snackbar to work correctly
           formikBag.setStatus(undefined);
