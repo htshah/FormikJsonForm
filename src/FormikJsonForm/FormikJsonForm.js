@@ -24,7 +24,7 @@ const renderChild = (element, disableFieldsOnSubmit, formikProps, index) => {
       <SimpleField
         key={index}
         {...element}
-        disabled={disableFieldsOnSubmit && formikProps.isSubmitting}
+        disabled={element.disabled || (disableFieldsOnSubmit && formikProps.isSubmitting)}
         formikProps={formikProps}
       />
     );

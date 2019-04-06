@@ -25,6 +25,7 @@ const formSchema = [
         label: "Username2",
         margin: "normal",
         value: "12345672389",
+        disabled: true,
         GridItemProps: { xs: 6 },
         inputProps: { maxLength: 10 },
         validate: Yup.number()
