@@ -16,7 +16,8 @@ const formSchema = [
   {
     type: "group",
     GridItemProps: {
-      direction: "column"
+      direction: "row",
+      spacing: 8
     },
     elements: [
       {

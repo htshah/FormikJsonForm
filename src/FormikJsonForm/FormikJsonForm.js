@@ -20,11 +20,16 @@ const renderChild = (element, disableFieldsOnSubmit, formikProps, index) => {
   // Render a normal react element
 
   if (isSimpleElement(element)) {
+    const { GridItemProps, ...filteredElement } = element;
+
     return (
       <SimpleField
         key={index}
-        {...element}
-        disabled={element.disabled || (disableFieldsOnSubmit && formikProps.isSubmitting)}
+        {...filteredElement}
+        disabled={
+          element.disabled ||
+          (disableFieldsOnSubmit && formikProps.isSubmitting)
+        }
         formikProps={formikProps}
       />
     );
